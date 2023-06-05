@@ -4,6 +4,7 @@ import cors from 'cors'
 import cookieParser from 'cookie-parser'
 import dotenv from 'dotenv'
 import userRoute from './routes/userRoute.js'
+import jwt from 'jsonwebtoken'
 
 const app = express()
 dotenv.config()
@@ -20,6 +21,20 @@ app.use(cors({
     methods: ["POST", "GET", "PUT", "DELETE"],
     credentials: true,
 }));
+
+const verifyUser = (req, res, next) => {
+    const token = req.cookies.token;
+    if (token) {
+        jwt.verify(token, process.env.KEY, (err) => {
+            if (err)
+                return res.json('token 錯誤');
+            next();
+        });
+    }
+    else {
+        res.json({ Error: "沒有token" });
+    }
+};
 
 app.use(cookieParser());
 app.use(express.json());

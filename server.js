@@ -3,6 +3,7 @@ import mongoose from 'mongoose'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
 import dotenv from 'dotenv'
+import userRoute from './routes/userRoute.js'
 
 const app = express()
 dotenv.config()
@@ -29,9 +30,6 @@ mongoose.connect(process.env.mongooseDB)
 })
 .catch(e => console.log(e.message));
 
+app.use('/api/auth',userRoute)
 
-app.get('/',(req,res)=>{
-    res.send('hi')
-})
-
-app.listen(8000)
+app.listen(POST)

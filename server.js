@@ -24,15 +24,15 @@ app.use(cors({
 
 const verifyUser = (req, res, next) => {
     const token = req.cookies.token;
+    console.log(token)
     if (token) {
         jwt.verify(token, process.env.KEY, (err) => {
-            if (err)
-                return res.json('token 錯誤');
+            if (err) return res.json('token 錯誤');
             next();
         });
     }
     else {
-        res.json({ Error: "沒有token" });
+        res.json({ status: 'fail' , message: "請先登入" });
     }
 };
 
@@ -46,5 +46,7 @@ mongoose.connect(process.env.mongooseDB)
 .catch(e => console.log(e.message));
 
 app.use('/api/auth',userRoute)
+
+app.get('/api/user',verifyUser,(req,res)=>{res.send('hi')})
 
 app.listen(POST)

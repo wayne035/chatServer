@@ -27,7 +27,7 @@ export const loginUserControllor = async(req,res)=>{
         const user = await User.findOne({username:username})
         if(user && await bcrypt.compare(password,user.password)){
             const token = jwt.sign({ id: user._id }, process.env.KEY, { expiresIn: '1d' });
-            res.cookie('token', token);
+            await res.cookie('token', token);
             return res.status(200).json({ status: 'success' });
         }else{
             return res.json({ status: 'fail', message: '請輸入正確的帳號或密碼' });

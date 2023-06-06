@@ -4,10 +4,11 @@ import cors from 'cors'
 import cookieParser from 'cookie-parser'
 import dotenv from 'dotenv'
 import userRoute from './routes/userRoute.js'
+import dataRoute from './routes/dataRoute.js'
 import jwt from 'jsonwebtoken'
 
-const app = express()
-dotenv.config()
+const app = express();
+dotenv.config();
 
 const POST = process.env.POST || 8000;
 
@@ -22,13 +23,19 @@ app.use(cors({
     credentials: true,
 }));
 
+app.use(cookieParser());
+app.use(express.json());
+
 const verifyUser = (req, res, next) => {
     const token = req.cookies.token;
-    console.log(token)
     if (token) {
-        jwt.verify(token, process.env.KEY, (err) => {
-            if (err) return res.json('token 錯誤');
-            next();
+        jwt.verify(token, process.env.KEY, (err,decoded) => {
+            if (err){
+                return res.json('token 錯誤');
+            }else{
+                req.username = decoded.username;
+                next();
+            }
         });
     }
     else {
@@ -36,17 +43,14 @@ const verifyUser = (req, res, next) => {
     }
 };
 
-app.use(cookieParser());
-app.use(express.json());
-
 mongoose.connect(process.env.mongooseDB)
 .then(() => {
     console.log('mongooseDB連接成功');
 })
 .catch(e => console.log(e.message));
 
-app.use('/api/auth',userRoute)
+app.use('/api/auth',userRoute);
 
-app.get('/api/user',verifyUser,(req,res)=>{res.send('hi')})
+app.use('/api/userdata',verifyUser,dataRoute);
 
-app.listen(POST)
+app.listen(POST);

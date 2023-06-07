@@ -36,3 +36,8 @@ export const loginUserControllor = async(req,res)=>{
         return res.status(500).json({ status: 'fail', message: '未知錯誤' });
     }
 }
+//登出用戶================================
+export const logoutUserControllor = async(req,res)=>{
+    res.clearCookie('token')
+    return res.json({status:'success', message: '登出成功' })
+}

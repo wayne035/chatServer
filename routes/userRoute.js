@@ -1,7 +1,8 @@
 import express from 'express'
 import { 
     createUserControllor,
-    loginUserControllor 
+    loginUserControllor,
+    logoutUserControllor 
 } from '../controllers/userController.js'
 
 const router = express.Router();
@@ -10,5 +11,7 @@ const router = express.Router();
 router.post('/register',createUserControllor);
 // api/auth/login
 router.post('/login',loginUserControllor);
+// api/auth/logout
+router.get('/logout',logoutUserControllor)
 
 export default router

@@ -34,6 +34,7 @@ const verifyUser = (req, res, next) => {
                 return res.json('token 錯誤');
             }else{
                 req.username = decoded.username;
+                req.id = decoded.id;
                 next();
             }
         });

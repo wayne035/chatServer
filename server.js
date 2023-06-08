@@ -6,11 +6,10 @@ import dotenv from 'dotenv'
 import userRoute from './routes/userRoute.js'
 import dataRoute from './routes/dataRoute.js'
 import jwt from 'jsonwebtoken'
+import { Server } from 'socket.io';
 
 const app = express();
 dotenv.config();
-
-const POST = process.env.POST || 8000;
 
 app.use((req, res, next) => {
     res.setHeader('Content-Security-Policy', "default-src 'self'");
@@ -18,7 +17,7 @@ app.use((req, res, next) => {
 });
 
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: process.env.ClientUrl,
     methods: ["POST", "GET", "PUT", "DELETE"],
     credentials: true,
 }));
@@ -54,4 +53,27 @@ app.use('/api/auth',userRoute);
 
 app.use('/api/userdata',verifyUser,dataRoute);
 
-app.listen(POST);
+const server = app.listen(process.env.POST);
+
+const io = new Server(server,{
+    cors:{
+        origin: process.env.ClientUrl,
+        credentials: true,
+    }
+})
+
+global.onlineUsers = new Map();
+
+io.on("connection", (socket) => {
+    global.chatSocket = socket;
+    socket.on("addUser", (userId) => {
+        onlineUsers.set(userId, socket.id);
+    });
+
+    socket.on("sendMsg",(data) => {
+      const sendUserSocket = onlineUsers.get(data['to']);
+      if (sendUserSocket) {
+        socket.to(sendUserSocket).emit("msgRecieve", data.msg);
+      }
+    });
+});

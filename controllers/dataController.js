@@ -21,6 +21,7 @@ export const getMessageControllor = async(req,res)=>{
             return {
                 fromSelf: msg.sender.toString() === from,
                 message:msg.message.text,
+                currentTime:msg.currentTime,
             }
         });
         res.json(allMessages);
@@ -31,12 +32,13 @@ export const getMessageControllor = async(req,res)=>{
 //儲存message===============================
 export const addMessageControllor = async(req,res)=>{
     try{
-        const {from , to , message} = req.body;
+        const {from , to , message ,currentTime} = req.body;
         if(from && to && message){
             await Message.create({
                 message:{text:message},
                 users:[from , to ],
                 sender:from,
+                currentTime:currentTime,
             });
         }else{
             return res.json({ status: 'fail', message: '創建失敗' });

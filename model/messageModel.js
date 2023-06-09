@@ -13,6 +13,7 @@ const messageSchema = new Schema({
         type:Schema.Types.ObjectId,
         ref:'user',
     },
+    currentTime:String,
 }, { timestamps: true });
 
 export default model('message', messageSchema);

@@ -73,7 +73,8 @@ io.on("connection", (socket) => {
     socket.on("sendMsg",(data) => {
       const sendUserSocket = onlineUsers.get(data['to']);
       if (sendUserSocket) {
-        socket.to(sendUserSocket).emit("msgRecieve", data.msg);
+        socket.to(sendUserSocket)
+        .emit("msgRecieve", data.msg ,data.currentTime);
       }
     });
 });

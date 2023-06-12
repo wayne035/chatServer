@@ -64,17 +64,19 @@ const io = new Server(server,{
 
 global.onlineUsers = new Map();
 
-io.on("connection", (socket) => {
+io.on('connection', (socket) => {
     global.chatSocket = socket;
-    socket.on("addUser", (userId) => {
+
+    socket.on('addUser', (userId,isLogin) => {
         onlineUsers.set(userId, socket.id);
+        io.emit('userLogin', isLogin);
     });
 
-    socket.on("sendMsg",(data) => {
+    socket.on('sendMsg',(data) => {
       const sendUserSocket = onlineUsers.get(data['to']);
       if (sendUserSocket) {
         socket.to(sendUserSocket)
-        .emit("msgRecieve", data.msg ,data.currentTime);
+        .emit('msgRecieve', data.msg ,data.currentTime);
       }
     });
 });

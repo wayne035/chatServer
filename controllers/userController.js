@@ -5,8 +5,11 @@ import jwt from 'jsonwebtoken'
 export const createUserControllor = async(req,res)=>{
     const{username,email,password} = req.body;
     try{
-        const userEmail = await User.findOne({email:email})
-        if(userEmail) return res.json({ status: 'fail',message:'e-mail已被使用'});
+        const user = await User.findOne().or([{ username }, { email }]).select('username email');
+        if (user) {
+            if (user.email === email) return res.json({ status: 'fail', message: 'e-mail已被使用' });
+            if (user.username === username) return res.json({ status: 'fail', message: '使用者名稱已被使用' });
+        }
         if(username.length >= 10) return res.json({ status: 'fail',message:'使用者名稱超過10個字'});
         if(username && email && password) {
             const hashPassword = await bcrypt.hash(password, 10);

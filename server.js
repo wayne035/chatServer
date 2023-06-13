@@ -26,7 +26,7 @@ app.use(cookieParser());
 app.use(express.json());
 
 const verifyUser = (req, res, next) => {
-    const token = req.cookies.token;
+    const token = req.body.token;
     if (token) {
         jwt.verify(token, process.env.KEY, (err,decoded) => {
             if (err){

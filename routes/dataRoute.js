@@ -8,7 +8,7 @@ import {
 const router = express.Router();
 
 // /api/userdata/all
-router.get('/all',getUserControllor);
+router.post('/all',getUserControllor);
 // /api/userdata/addmsg
 router.post('/addmsg',addMessageControllor);
 // /api/userdata/getmsg
